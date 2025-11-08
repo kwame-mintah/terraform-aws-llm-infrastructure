@@ -1,5 +1,5 @@
 locals {
-  account_name = ""
-  profile      = ""
-  account_id   = ""
+  account_name = "k-dev"
+  profile      = "k-dev"
+  account_id   = "827284457226"
 }

@@ -8,11 +8,12 @@ locals {
 }
 
 include {
-  path = find_in_parent_folders()
+  path = find_in_parent_folders("root.hcl")
 }
 
 # These are inputs that need to be passed for the terragrunt configuration
 inputs = {
+  env_prefix = "dev"
   tags = {
     Terraform   = "true"
     Environment = "${local.environment}"
