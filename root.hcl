@@ -1,5 +1,5 @@
 locals {
-  project_name = "terraform-aws-template"
+  project_name = "llm-infrastructure"
   aws_region   = "eu-west-2"
   # Could use `find_in_parent_folders()` if file was in the parent directory.
   account     = read_terragrunt_config("account.hcl")
@@ -20,6 +20,11 @@ generate "provider" {
 provider "aws" {
   region              = "${local.aws_region}"
   allowed_account_ids = ["${local.account_id}"]
+  default_tags {
+    tags = {
+      Project = "terraform-aws-llm-infrastructure"
+    }
+  }
 }
 EOF
 }
@@ -53,6 +58,6 @@ remote_state {
 #-------------------------------------------------------------------------------------------
 inputs = {
   aws_region          = "${local.aws_region}"
-  allowed_account_ids = "${local.account_id}"
+  allowed_account_ids = ["${local.account_id}"]
   project_name        = "${local.project_name}"
 }
