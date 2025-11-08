@@ -1,6 +1,7 @@
-# Terraform AWS Template
+# Terraform AWS Large Language Model (LLM) Infrastructure
 
-The main purpose of this repository is to create a template for [Terraform](https://www.terraform.io/). This project will focus on the [AWS](https://registry.terraform.io/providers/hashicorp/aws/latest) provider.
+The main purpose of this repository is to create an [AWS EC2](https://aws.amazon.com/ec2/) instance that will run a large language model (LLM) using
+an the [Ollama](https://ollama.com/) server. Along side other resources such as [AWS App Runner](https://aws.amazon.com/apprunner/).
 
 ## Development
 
@@ -15,19 +16,31 @@ The main purpose of this repository is to create a template for [Terraform](http
 ## Prerequisites
 
 1. Have a [AWS account](https://aws.amazon.com/free) account and [associated credentials](https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html).
+2. You may need to request a service quote increase for example for [AWS EC2](http://aws.amazon.com/contact-us/ec2-request) ('*All G and VT Spot Instance Requests*' 0 -> 1), you will not be able to deploy resources until the request has been completed by AWS.
 
 ## Usage
 
 1. Navigate to the environment you would like to deploy,
-2. Initialize the configuration with:
+2. Create the S3 bucket for your Terraform state file:
+   
+   ```bash
+   aws-vault exec <profile> --no-session terragrunt backend bootstrap
+   ```
+
+3. Initialize the configuration with:
+   
    ```bash
    aws-vault exec <profile> --no-session terragrunt init
    ```
-3. Plan your changes with:
+
+4. Plan your changes with:
+   
    ```bash
    aws-vault exec <profile> --no-session terragrunt plan
    ``` 
-4. If you're happy with the changes 
+
+5. If you're happy with the changes:
+   
    ```bash
    aws-vault exec <profile> --no-session terragrunt apply
    ```
