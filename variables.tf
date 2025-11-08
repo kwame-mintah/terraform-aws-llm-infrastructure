@@ -16,3 +16,25 @@ EOF
 
   type = string
 }
+
+variable "env_prefix" {
+  description = <<-EOF
+  The prefix added to resources in the environment.
+
+EOF
+
+  type = string
+  validation {
+    condition     = contains(["dev", "staging", "prod", "sandbox"], var.env_prefix)
+    error_message = "The env_prefix value must be either: dev, staging, prod or sandbox."
+  }
+}
+
+variable "project_name" {
+  description = <<-EOF
+  The name of the project.
+
+EOF
+
+  type = string
+}
