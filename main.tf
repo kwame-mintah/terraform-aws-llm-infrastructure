@@ -10,10 +10,33 @@ locals {
   name_prefix = "${var.project_name}-${var.aws_region}-${var.env_prefix}"
 }
 
+resource "tls_private_key" "ollama_developer_ssh_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "ollama_developer" {
+  key_name_prefix = "${local.name_prefix}-ollama"
+  public_key      = trimspace(tls_private_key.ollama_developer_ssh_key.public_key_openssh)
+}
+
 resource "aws_instance" "ollama_instance" {
   ami           = "ami-075599e9cc6e3190d"
   instance_type = "g4dn.xlarge" # Smallest and cheapest instance with GPU
+  key_name      = aws_key_pair.ollama_developer.key_name
+  monitoring    = true
+  ebs_optimized = true
+
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+  }
+
+  root_block_device {
+    encrypted = true
+  }
   tags = {
-    Service = "Ollama"
+    Name    = "${local.name_prefix}-ollama"
+    Service = "Ollama Server"
   }
 }
