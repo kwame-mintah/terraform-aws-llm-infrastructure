@@ -16,7 +16,9 @@ an the [Ollama](https://ollama.com/) server. Along side other resources such as 
 ## Prerequisites
 
 1. Have a [AWS account](https://aws.amazon.com/free) account and [associated credentials](https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html).
-2. You may need to request a service quote increase for example for [AWS EC2](http://aws.amazon.com/contact-us/ec2-request) ('*All G and VT Spot Instance Requests*' 0 -> 1), you will not be able to deploy resources until the request has been completed by AWS.
+2. You may need to [request a service quote increase](https://docs.aws.amazon.com/servicequotas/latest/userguide/request-quota-increase.html) for example for [AWS EC2](http://aws.amazon.com/contact-us/ec2-request) you will not be able to deploy resources until the request has been completed by AWS:
+   - Running On-Demand G and VT instances
+   - All G and VT Spot Instance Requests
 
 ## Usage
 
@@ -74,12 +76,14 @@ Code formatting and documentation for `variables` and `outputs` is generated usi
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7, <= 1.13.4 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.19.0 |
+| <a name="requirement_tls"></a> [tls](#requirement\_tls) | ~> 4.1.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 6.19.0 |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.1.0 |
 
 ## Modules
 
@@ -89,6 +93,9 @@ No modules.
 
 | Name | Type |
 |------|------|
+| [aws_instance.ollama_instance](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance) | resource |
+| [aws_key_pair.ollama_developer](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/key_pair) | resource |
+| [tls_private_key.ollama_developer_ssh_key](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [aws_availability_zones.available_zones](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
 | [aws_caller_identity.current_caller_identity](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 
@@ -98,6 +105,8 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_allowed_account_ids"></a> [allowed\_account\_ids](#input\_allowed\_account\_ids) | List of allowed AWS account IDs to prevent you<br>from mistakenly using an incorrect one. | `list(string)` | n/a | yes |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | The AWS region. | `string` | n/a | yes |
+| <a name="input_env_prefix"></a> [env\_prefix](#input\_env\_prefix) | The prefix added to resources in the environment. | `string` | n/a | yes |
+| <a name="input_project_name"></a> [project\_name](#input\_project\_name) | The name of the project. | `string` | n/a | yes |
 
 ## Outputs
 
@@ -105,4 +114,7 @@ No modules.
 |------|-------------|
 | <a name="output_availability_zones"></a> [availability\_zones](#output\_availability\_zones) | List of the Availability Zone names available to the account. |
 | <a name="output_current_caller_identity"></a> [current\_caller\_identity](#output\_current\_caller\_identity) | AWS Account ID number of the account that owns or contains the <br>calling entity. |
+| <a name="output_ec2_ollama_server_instance_public_dns"></a> [ec2\_ollama\_server\_instance\_public\_dns](#output\_ec2\_ollama\_server\_instance\_public\_dns) | Public key data in PEM (RFC 1421) format for connecting to the EC2<br>instance hosting the Ollama server. |
+| <a name="output_tls_ollama_developer_private_key"></a> [tls\_ollama\_developer\_private\_key](#output\_tls\_ollama\_developer\_private\_key) | Private key data in PEM (RFC 1421) format for connecting to the EC2<br>instance hosting the Ollama server. |
+| <a name="output_tls_ollama_developer_public_key"></a> [tls\_ollama\_developer\_public\_key](#output\_tls\_ollama\_developer\_public\_key) | Public key data in PEM (RFC 1421) format for connecting to the EC2<br>instance hosting the Ollama server. |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK --->
