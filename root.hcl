@@ -23,6 +23,7 @@ provider "aws" {
   default_tags {
     tags = {
       Project = "terraform-aws-llm-infrastructure"
+      Environment = "${local.environment_name}"
     }
   }
 }
