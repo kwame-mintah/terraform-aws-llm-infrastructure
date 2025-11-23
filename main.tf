@@ -6,8 +6,13 @@ data "aws_availability_zones" "available_zones" {}
 # in which Terraform is authorized.
 data "aws_caller_identity" "current_caller_identity" {}
 
+data "http" "aws_check_ip" {
+  url = "https://checkip.amazonaws.com/"
+}
+
 locals {
-  name_prefix = "${var.project_name}-${var.aws_region}-${var.env_prefix}"
+  name_prefix     = "${var.project_name}-${var.aws_region}-${var.env_prefix}"
+  user_ip_address = chomp(data.http.aws_check_ip.response_body)
 }
 
 resource "tls_private_key" "ollama_developer_ssh_key" {
@@ -21,11 +26,13 @@ resource "aws_key_pair" "ollama_developer" {
 }
 
 resource "aws_instance" "ollama_instance" {
-  ami           = "ami-075599e9cc6e3190d"
-  instance_type = "g4dn.xlarge" # Smallest and cheapest instance with GPU
-  key_name      = aws_key_pair.ollama_developer.key_name
-  monitoring    = true
-  ebs_optimized = true
+  ami                    = "ami-075599e9cc6e3190d"
+  instance_type          = "g4dn.xlarge" # Smallest and cheapest instance with GPU
+  key_name               = aws_key_pair.ollama_developer.key_name
+  monitoring             = true
+  ebs_optimized          = true
+  subnet_id              = aws_subnet.main.id
+  vpc_security_group_ids = [aws_security_group.sg_ollama_server.id]
 
   metadata_options {
     http_endpoint = "enabled"
@@ -33,10 +40,30 @@ resource "aws_instance" "ollama_instance" {
   }
 
   root_block_device {
-    encrypted = true
+    volume_size = 16 # Increase as needed depending on the model size
+    encrypted   = true
   }
   tags = {
     Name    = "${local.name_prefix}-ollama"
     Service = "Ollama Server"
   }
+}
+
+resource "aws_security_group" "sg_ollama_server" {
+  name        = "${local.name_prefix}-ollama-security-group"
+  description = "Allow traffic from specific source to Ollama server"
+  vpc_id      = aws_vpc.main.id
+
+  tags = {
+    Name    = "${local.name_prefix}-ollama-security-group"
+    Service = "Ollama Server"
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "allow_ssh_tcp_ipv4" {
+  security_group_id = aws_security_group.sg_ollama_server.id
+  cidr_ipv4         = "${local.user_ip_address}/32"
+  to_port           = 22
+  from_port         = 22
+  ip_protocol       = "tcp"
 }
