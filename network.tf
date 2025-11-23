@@ -16,10 +16,15 @@ resource "aws_subnet" "main" {
   availability_zone       = "${var.aws_region}a"
 }
 
-resource "aws_flow_log" "main" {
-  traffic_type = "ALL"
-  vpc_id       = aws_vpc.main.id
-}
+# resource "aws_flow_log" "main" {
+#   log_destination = aws_cloudwatch_log_group.vpc_main_cloudwatch_group.arn
+#   traffic_type    = "ALL"
+#   vpc_id          = aws_vpc.main.id
+# }
+
+# resource "aws_cloudwatch_log_group" "vpc_main_cloudwatch_group" {
+#   name = "${local.name_prefix}-vpc-cloudwatch-group"
+# }
 
 # Create Internet Gateway (IGW) for public subnet to access the internet
 resource "aws_internet_gateway" "igw" {
