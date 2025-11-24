@@ -38,10 +38,18 @@ EOF
   sensitive = true
 }
 
+output "ollama_developer_key_pair_name" {
+  description = <<-EOF
+    The key pair name.
+
+EOF
+
+  value = aws_key_pair.ollama_developer.key_name
+}
+
 output "ec2_ollama_server_instance_public_dns" {
   description = <<-EOF
-    Public key data in PEM (RFC 1421) format for connecting to the EC2
-    instance hosting the Ollama server.
+    Public DNS name assigned to the instance.
 
 EOF
 

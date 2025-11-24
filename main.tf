@@ -10,6 +10,10 @@ data "http" "aws_check_ip" {
   url = "https://checkip.amazonaws.com/"
 }
 
+# data "http" "github_ip_addresses" {
+#   url = "https://api.github.com/meta"
+# }
+
 locals {
   name_prefix     = "${var.project_name}-${var.aws_region}-${var.env_prefix}"
   user_ip_address = chomp(data.http.aws_check_ip.response_body)
@@ -61,9 +65,49 @@ resource "aws_security_group" "sg_ollama_server" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_ssh_tcp_ipv4" {
+  description       = "Allow SSH access to EC2 instances for given ip address"
   security_group_id = aws_security_group.sg_ollama_server.id
   cidr_ipv4         = "${local.user_ip_address}/32"
   to_port           = 22
   from_port         = 22
   ip_protocol       = "tcp"
+}
+
+resource "aws_vpc_security_group_ingress_rule" "allow_ollama_server_communication" {
+  description       = "Allow access to Ollama server for given ip address"
+  security_group_id = aws_security_group.sg_ollama_server.id
+  cidr_ipv4         = "${local.user_ip_address}/32"
+  to_port           = 11434
+  from_port         = 11434
+  ip_protocol       = "tcp"
+}
+
+resource "aws_vpc_security_group_egress_rule" "allow_ssh_tcp_https" {
+  description       = "Allow HTTPS access out to Ollama servers (ollama.com)"
+  security_group_id = aws_security_group.sg_ollama_server.id
+  cidr_ipv4         = "34.36.133.15/32"
+  from_port         = 443
+  to_port           = 443
+  ip_protocol       = "tcp"
+}
+
+resource "aws_vpc_security_group_egress_rule" "allow_all_github_com" {
+  description       = "Allow access out to GitHub servers (github.com)"
+  security_group_id = aws_security_group.sg_ollama_server.id
+  cidr_ipv4         = "20.26.156.215/32" # TODO: Find a way to use `http.github_ip_addresses` to get the ip address(?)
+  ip_protocol       = "-1"
+}
+
+resource "aws_vpc_security_group_egress_rule" "allow_all_github_user_releases" {
+  description       = "Allow access out to GitHub release assets (release-assets.githubusercontent.com)"
+  security_group_id = aws_security_group.sg_ollama_server.id
+  cidr_ipv4         = "185.199.109.133/32" # TODO: Find a way to use `http.github_ip_addresses` to get the ip address(?) 185.199.109.133, 185.199.108.133, 185.199.110.133, 185.199.111.133
+  ip_protocol       = "-1"
+}
+
+resource "aws_vpc_security_group_egress_rule" "allow_all_developer_nvidia_com" {
+  description       = "Allow access out to NVIDIA repository (developer.download.nvidia.com)"
+  security_group_id = aws_security_group.sg_ollama_server.id
+  cidr_ipv4         = "2.22.249.136/32" # TODO: 2.22.249.136, 2.22.249.152, 2.22.249.158, 2.22.249.144, 2.22.249.134, 2.22.249.187
+  ip_protocol       = "-1"
 }
