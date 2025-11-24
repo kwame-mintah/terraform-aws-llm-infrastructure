@@ -31,7 +31,7 @@ resource "aws_instance" "ollama_instance" {
   key_name               = aws_key_pair.ollama_developer.key_name
   monitoring             = true
   ebs_optimized          = true
-  subnet_id              = aws_subnet.main.id
+  subnet_id              = aws_subnet.main_subnet.id
   vpc_security_group_ids = [aws_security_group.sg_ollama_server.id]
 
   metadata_options {
@@ -52,7 +52,7 @@ resource "aws_instance" "ollama_instance" {
 resource "aws_security_group" "sg_ollama_server" {
   name        = "${local.name_prefix}-ollama-security-group"
   description = "Allow traffic from specific source to Ollama server"
-  vpc_id      = aws_vpc.main.id
+  vpc_id      = aws_vpc.main_vpc.id
 
   tags = {
     Name    = "${local.name_prefix}-ollama-security-group"
