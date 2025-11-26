@@ -38,3 +38,14 @@ EOF
 
   type = string
 }
+
+variable "additional_developer_access_ip_addresses" {
+  description = <<-EOF
+  Map of developer name and their IP address to access
+  various resources.
+
+EOF
+
+  type    = map(string)
+  default = {}
+}
