@@ -14,8 +14,8 @@ sudo bash -c '{
 } >> /etc/systemd/system/ollama.service'
 
 # Reload systemd, enable and start ollama server 
-sudo systemctl stop ollama && \
 sudo systemctl daemon-reload && \
+sudo systemctl stop ollama && \
 sudo systemctl enable ollama && \
 sudo systemctl start ollama && \
 
