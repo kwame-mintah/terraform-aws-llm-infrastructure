@@ -87,32 +87,23 @@ resource "aws_vpc_security_group_ingress_rule" "allow_ollama_server_communicatio
   ip_protocol       = "tcp"
 }
 
-resource "aws_vpc_security_group_egress_rule" "allow_ssh_tcp_https" {
-  description       = "Allow HTTPS access out to Ollama servers (ollama.com)"
+# Allow internet access as per AWS architecture recommendation, rather than whitelisting
+# Each IP address from each CDN, as this could change:
+# https://docs.aws.amazon.com/whitepapers/latest/building-scalable-secure-multi-vpc-network-infrastructure/using-nat-gateway-for-centralized-egress.html
+resource "aws_vpc_security_group_egress_rule" "allow_outbound_https_access" {
+  description       = "Allow internet access to various resources" # (developer.download.nvidia.com) / (release-assets.githubusercontent.com) / (github.com) / (ollama.com)
   security_group_id = aws_security_group.sg_ollama_server.id
-  cidr_ipv4         = "34.36.133.15/32"
-  from_port         = 443
+  cidr_ipv4         = "0.0.0.0/0"
   to_port           = 443
+  from_port         = 443
   ip_protocol       = "tcp"
 }
 
-resource "aws_vpc_security_group_egress_rule" "allow_all_github_com" {
-  description       = "Allow access out to GitHub servers (github.com)"
+resource "aws_vpc_security_group_egress_rule" "allow_outbound_http_access" {
+  description       = "Allow internet access to HTTP"
   security_group_id = aws_security_group.sg_ollama_server.id
-  cidr_ipv4         = "20.26.156.215/32" # TODO: Find a way to use `http.github_ip_addresses` to get the ip address(?)
-  ip_protocol       = "-1"
-}
-
-resource "aws_vpc_security_group_egress_rule" "allow_all_github_user_releases" {
-  description       = "Allow access out to GitHub release assets (release-assets.githubusercontent.com)"
-  security_group_id = aws_security_group.sg_ollama_server.id
-  cidr_ipv4         = "185.199.109.133/32" # TODO: Find a way to use `http.github_ip_addresses` to get the ip address(?) 185.199.109.133, 185.199.108.133, 185.199.110.133, 185.199.111.133
-  ip_protocol       = "-1"
-}
-
-resource "aws_vpc_security_group_egress_rule" "allow_all_developer_nvidia_com" {
-  description       = "Allow access out to NVIDIA repository (developer.download.nvidia.com)"
-  security_group_id = aws_security_group.sg_ollama_server.id
-  cidr_ipv4         = "2.22.249.136/32" # TODO: 2.22.249.136, 2.22.249.152, 2.22.249.158, 2.22.249.144, 2.22.249.134, 2.22.249.187
-  ip_protocol       = "-1"
+  cidr_ipv4         = "0.0.0.0/0"
+  from_port         = 80
+  to_port           = 80
+  ip_protocol       = "tcp"
 }
