@@ -41,6 +41,10 @@ resource "aws_instance" "ollama_instance" {
   subnet_id              = aws_subnet.main_subnet.id
   vpc_security_group_ids = [aws_security_group.sg_ollama_server.id]
 
+  user_data = base64encode(templatefile("${path.module}/scripts/ec2/install_ollama_server.sh", {
+    ollama_model = var.ollama_default_model_installed
+  }))
+
   metadata_options {
     http_endpoint = "enabled"
     http_tokens   = "required"

@@ -49,3 +49,14 @@ EOF
   type    = map(string)
   default = {}
 }
+
+variable "ollama_default_model_installed" {
+  description = <<-EOF
+  The Ollama model to be pulled from registry,
+  ready to be invoked.
+
+EOF
+
+  type    = string
+  default = "gemma3n:e4b"
+}
