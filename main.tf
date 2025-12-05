@@ -20,6 +20,35 @@ locals {
     me = chomp(data.http.aws_check_ip.response_body)
     }, var.additional_developer_access_ip_addresses
   )
+  long_form_environment_name = {
+    "dev"  = "development"
+    "stg"  = "staging"
+    "prod" = "production"
+  }
+}
+
+resource "aws_resourcegroups_group" "project_resource_group" {
+  name = "${local.name_prefix}-resource-group"
+
+  resource_query {
+    query = <<JSON
+{
+  "ResourceTypeFilters": [
+    "AWS::AllSupported"
+  ],
+  "TagFilters": [
+    {
+      "Key": "Project",
+      "Values": ["terraform-aws-llm-infrastructure"]
+    },
+    {
+      "Key": "Environment",
+      "Values": ["${local.long_form_environment_name[var.env_prefix]}"]
+    }
+  ]
+}
+JSON
+  }
 }
 
 resource "tls_private_key" "ollama_developer_ssh_key" {
@@ -41,7 +70,7 @@ resource "aws_instance" "ollama_instance" {
   subnet_id              = aws_subnet.main_subnet.id
   vpc_security_group_ids = [aws_security_group.sg_ollama_server.id]
 
-  user_data = base64encode(templatefile("${path.module}/scripts/ec2/install_ollama_server.sh", {
+  user_data_base64 = base64encode(templatefile("${path.module}/scripts/ec2/install_ollama_server.sh", {
     ollama_model = var.ollama_default_model_installed
   }))
 
