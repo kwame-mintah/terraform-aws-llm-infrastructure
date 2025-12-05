@@ -55,3 +55,12 @@ EOF
 
   value = aws_instance.ollama_instance.public_dns
 }
+
+output "ec2_ollama_server_instance_public_ip_address" {
+  description = <<-EOF
+    Public IP address assigned to the instance.
+
+EOF
+
+  value = aws_instance.ollama_instance.public_ip
+}
