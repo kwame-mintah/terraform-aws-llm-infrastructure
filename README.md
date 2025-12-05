@@ -98,15 +98,14 @@ No modules.
 | [aws_instance.ollama_instance](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance) | resource |
 | [aws_internet_gateway.main_igw](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway) | resource |
 | [aws_key_pair.ollama_developer](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/key_pair) | resource |
+| [aws_resourcegroups_group.project_resource_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/resourcegroups_group) | resource |
 | [aws_route_table.main_public_route_table](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table) | resource |
 | [aws_route_table_association.main_route_table_public_assoc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association) | resource |
 | [aws_security_group.sg_ollama_server](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_subnet.main_subnet](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet) | resource |
 | [aws_vpc.main_vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc) | resource |
-| [aws_vpc_security_group_egress_rule.allow_all_developer_nvidia_com](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_egress_rule) | resource |
-| [aws_vpc_security_group_egress_rule.allow_all_github_com](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_egress_rule) | resource |
-| [aws_vpc_security_group_egress_rule.allow_all_github_user_releases](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_egress_rule) | resource |
-| [aws_vpc_security_group_egress_rule.allow_ssh_tcp_https](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_egress_rule) | resource |
+| [aws_vpc_security_group_egress_rule.allow_outbound_http_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_egress_rule) | resource |
+| [aws_vpc_security_group_egress_rule.allow_outbound_https_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_egress_rule) | resource |
 | [aws_vpc_security_group_ingress_rule.allow_ollama_server_communication_for_users](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
 | [aws_vpc_security_group_ingress_rule.allow_ssh_tcp_for_users](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
 | [tls_private_key.ollama_developer_ssh_key](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
@@ -122,6 +121,7 @@ No modules.
 | <a name="input_allowed_account_ids"></a> [allowed\_account\_ids](#input\_allowed\_account\_ids) | List of allowed AWS account IDs to prevent you<br>from mistakenly using an incorrect one. | `list(string)` | n/a | yes |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | The AWS region. | `string` | n/a | yes |
 | <a name="input_env_prefix"></a> [env\_prefix](#input\_env\_prefix) | The prefix added to resources in the environment. | `string` | n/a | yes |
+| <a name="input_ollama_default_model_installed"></a> [ollama\_default\_model\_installed](#input\_ollama\_default\_model\_installed) | The Ollama model to be pulled from registry,<br>ready to be invoked. | `string` | `"gemma3n:e4b"` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | The name of the project. | `string` | n/a | yes |
 
 ## Outputs
@@ -131,6 +131,7 @@ No modules.
 | <a name="output_availability_zones"></a> [availability\_zones](#output\_availability\_zones) | List of the Availability Zone names available to the account. |
 | <a name="output_current_caller_identity"></a> [current\_caller\_identity](#output\_current\_caller\_identity) | AWS Account ID number of the account that owns or contains the <br>calling entity. |
 | <a name="output_ec2_ollama_server_instance_public_dns"></a> [ec2\_ollama\_server\_instance\_public\_dns](#output\_ec2\_ollama\_server\_instance\_public\_dns) | Public DNS name assigned to the instance. |
+| <a name="output_ec2_ollama_server_instance_public_ip_address"></a> [ec2\_ollama\_server\_instance\_public\_ip\_address](#output\_ec2\_ollama\_server\_instance\_public\_ip\_address) | Public IP address assigned to the instance. |
 | <a name="output_ollama_developer_key_pair_name"></a> [ollama\_developer\_key\_pair\_name](#output\_ollama\_developer\_key\_pair\_name) | The key pair name. |
 | <a name="output_tls_ollama_developer_private_key"></a> [tls\_ollama\_developer\_private\_key](#output\_tls\_ollama\_developer\_private\_key) | Private key data in PEM (RFC 1421) format for connecting to the EC2<br>instance hosting the Ollama server. |
 | <a name="output_tls_ollama_developer_public_key"></a> [tls\_ollama\_developer\_public\_key](#output\_tls\_ollama\_developer\_public\_key) | Public key data in PEM (RFC 1421) format for connecting to the EC2<br>instance hosting the Ollama server. |
