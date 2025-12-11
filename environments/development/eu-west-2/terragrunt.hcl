@@ -18,4 +18,5 @@ inputs = {
     Terraform   = "true"
     Environment = "${local.environment}"
   }
+  allow_developer_access = true
 }
