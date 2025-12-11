@@ -39,6 +39,18 @@ EOF
   type = string
 }
 
+variable "allow_developer_access" {
+  description = <<-EOF
+  Whether to allow developers access to resources, by creating
+  relevant resources e.g. ingress rules, ssh keys etc.
+
+EOF
+
+  type    = bool
+  default = false
+}
+
+
 variable "additional_developer_access_ip_addresses" {
   description = <<-EOF
   Map of developer name and their IP address to access

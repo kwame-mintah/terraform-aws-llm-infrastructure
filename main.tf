@@ -16,9 +16,11 @@ data "http" "aws_check_ip" {
 
 locals {
   name_prefix = "${var.project_name}-${var.aws_region}-${var.env_prefix}"
-  developer_access = merge({
-    me = chomp(data.http.aws_check_ip.response_body)
-    }, var.additional_developer_access_ip_addresses
+  developer_access = merge(
+    {
+      me = chomp(data.http.aws_check_ip.response_body)
+    },
+    var.additional_developer_access_ip_addresses
   )
   long_form_environment_name = {
     "dev"  = "development"
@@ -101,7 +103,7 @@ resource "aws_security_group" "sg_ollama_server" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_ssh_tcp_for_users" {
-  for_each          = tomap(local.developer_access)
+  for_each          = var.allow_developer_access ? tomap(local.developer_access) : {}
   description       = "Allow SSH access to EC2 instances for ${each.key}"
   security_group_id = aws_security_group.sg_ollama_server.id
   cidr_ipv4         = "${each.value}/32"
@@ -111,7 +113,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_ssh_tcp_for_users" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_ollama_server_communication_for_users" {
-  for_each          = tomap(local.developer_access)
+  for_each          = var.allow_developer_access ? tomap(local.developer_access) : {}
   description       = "Allow access to Ollama server for ${each.key}"
   security_group_id = aws_security_group.sg_ollama_server.id
   cidr_ipv4         = "${each.value}/32"
