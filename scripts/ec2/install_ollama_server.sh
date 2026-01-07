@@ -1,7 +1,11 @@
 #!/bin/bash
 set -e
 
-exec > /var/log/user-data.log 2>&1
+if [ "$EUID" -ne 0 ]; then
+  exec sudo -E bash "$0" "$@"
+fi
+
+exec > >(tee /var/log/user-data.log | logger -t user-data -s) 2>&1
 
 echo "Starting Ollama installation..."
 
